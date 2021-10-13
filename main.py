@@ -1,12 +1,14 @@
 import pygame
-from pygame.locals import *
-from sys import exit
 import os
+
+from pygame.locals import *
+from time import sleep
+from sys import exit
 
 # definindo diretórios
 diretorio_principal = os.path.dirname(__file__)
-diretorio_sprites = os.path.join(diretorio_principal, "sprites")
-diretorio_sons = os.path.join(diretorio_principal, "sons")
+diretorio_sprites = os.path.join(diretorio_principal, "assets", "sprites")
+diretorio_sons = os.path.join(diretorio_principal, "assets", "sons")
 
 pygame.init()
 sprite_sheet = pygame.image.load(os.path.join(diretorio_sprites, "Personagem.png"))
@@ -28,7 +30,7 @@ G = 40
 class Personagem(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.sprites = list()
+        self.sprites = []
         for i in range(7):
             img = sprite_sheet.subsurface((i * 32, 0), (32, 32))
             self.sprites.append(img)
@@ -50,25 +52,33 @@ class Personagem(pygame.sprite.Sprite):
         self.correr = True
 
     def update(self):
-        if self.correr:
-            if self.indice == 3 or self.indice == 6:
-                self.atual = 2
-            if self.indice == 4 or self.indice == 5:
-                self.atual = 3
-            if self.indice == 7 or self.indice == 12:
-                self.atual = 4
-            if self.indice == 8 or self.indice == 11:
-                self.atual = 5
-            if self.indice == 9 or self.indice == 10:
-                self.atual = 6
-            self.indice += 0.5
+        # if self.correr:
+        #     if self.indice == 3 or self.indice == 6:
+        #         self.atual = 2
+        #     if self.indice == 4 or self.indice == 5:
+        #         self.atual = 3
+        #     if self.indice == 7 or self.indice == 12:
+        #         self.atual = 4
+        #     if self.indice == 8 or self.indice == 11:
+        #         self.atual = 5
+        #     if self.indice == 9 or self.indice == 10:
+        #         self.atual = 6
+        #     self.indice += 0.5
+        #     self.correr = False
+        # else:
+        #     self.atual = 0
+
+        # if self.indice > 12:
+        #     self.indice = 3
+
+        
+        if self.correr == False:
+            self.atual = 0
+        elif self.correr and self.indice % 2 == 0:
+            self.atual = (self.atual >= len(self.sprites) - 1) and 3 or self.atual + 1
             self.correr = False
-        else:
-            personagem.atual = 0
 
-        if self.indice > 12:
-            self.indice = 3
-
+        self.indice += 1
         self.image = self.sprites[self.atual]
         self.image = pygame.transform.scale(self.image, (32 * 5, 32 * 5))
 
