@@ -2,7 +2,6 @@ import pygame
 import os
 
 from pygame.locals import *
-from time import sleep
 from sys import exit
 
 # definindo diretórios
@@ -44,6 +43,7 @@ class Personagem(pygame.sprite.Sprite):
 
         self.correr = False
         self.pular = False
+        self.reverse = False
 
     def pulo(self):
         self.pular = True
@@ -52,31 +52,17 @@ class Personagem(pygame.sprite.Sprite):
         self.correr = True
 
     def update(self):
-        # if self.correr:
-        #     if self.indice == 3 or self.indice == 6:
-        #         self.atual = 2
-        #     if self.indice == 4 or self.indice == 5:
-        #         self.atual = 3
-        #     if self.indice == 7 or self.indice == 12:
-        #         self.atual = 4
-        #     if self.indice == 8 or self.indice == 11:
-        #         self.atual = 5
-        #     if self.indice == 9 or self.indice == 10:
-        #         self.atual = 6
-        #     self.indice += 0.5
-        #     self.correr = False
-        # else:
-        #     self.atual = 0
 
-        # if self.indice > 12:
-        #     self.indice = 3
-
-        
         if self.correr == False:
             self.atual = 0
         elif self.correr and self.indice % 2 == 0:
-            self.atual = (self.atual >= len(self.sprites) - 1) and 3 or self.atual + 1
+            self.atual = self.reverse and self.atual - 1 or self.atual + 1
             self.correr = False
+
+            # se o index da animacao for maior ou igual a 6, reverter a animacao
+            # se for menor que 3, ir no fluxo normal,
+            # se nao for nenhum dos dois, nao mudar, continuar sendo True ou False
+            self.reverse = self.atual >= len(self.sprites) - 1 or (False if self.atual <= 2 else self.reverse)
 
         self.indice += 1
         self.image = self.sprites[self.atual]
