@@ -24,7 +24,7 @@ pygame.display.set_caption("Perazzo Contra as Forças rWins")
 # Criando a gravidade:
 aceleracao_x = aceleracao_y = 0
 tempo = pygame.time.Clock()
-G = 40
+G = 10
 
 
 # Configurando o personagem principal
@@ -50,6 +50,8 @@ class Personagem(pygame.sprite.Sprite):
         self.pular = False
         self.reverse = False
 
+        self.forca_y = 0
+
 
     def pulo(self): # Função chamada quando apertamos "W" ou "Up"
         self.pular = True
@@ -60,15 +62,15 @@ class Personagem(pygame.sprite.Sprite):
     def update(self): 
         # Configurando o pulo:
         if self.pular:
-            if self.rect.y == chao - 150: # Quando chegar em 150 pixels acima do chão (altura máxima) a animação é a de descer
+            if self.forca_y < 0: 
                 self.descer = True
             if self.descer == True:    
                 self.atual = 10
             else:
                 self.atual = 9
-
+    
         # Personagem parado e respirando (alternando entre as sprites 0, 1, 2 e 3. O primeiro sprite é mais demorado )
-        elif self.correr == False and self.pular == False:
+        elif  not self.correr:
             if int(self.atual) == 0: # Se o sprite for 0, ele vai demorar mais pra alternar
                 self.atual += 0.05 
             else:
@@ -77,16 +79,16 @@ class Personagem(pygame.sprite.Sprite):
                 self.atual = 0
 
         elif self.correr and self.indice % 2 == 0:
-            self.atual = self.reverse and self.atual - 1 or self.atual + 1
-
             # se o index da animacao for maior ou igual a 8, reverter a animacao
             # se for menor que 4, ir no fluxo normal,
             # se nao for nenhum dos dois, nao mudar, continuar sendo True ou False
             self.reverse = self.atual >= 8 or (False if self.atual <= 4 else self.reverse)
 
+            self.atual = self.reverse and self.atual - 1 or self.atual + 1
+
+
         self.indice += 1
-        #if self.atual != 0:
-            #print(self.atual)
+
         self.image = self.sprites[int(self.atual)]
         
         if self.rect.y == chao:
@@ -114,7 +116,7 @@ while True:
     if pygame.key.get_pressed()[K_w] or pygame.key.get_pressed()[K_UP]:
         personagem.pulo()
         if personagem.rect.y == chao:
-            aceleracao_y = -20
+            personagem.forca_y = 150
 
     # Ir para a esquerda:
     if pygame.key.get_pressed()[K_a] or pygame.key.get_pressed()[K_LEFT]:
@@ -127,16 +129,20 @@ while True:
         personagem.andar()
         personagem.rect.x += vel
 
-    # Aplicando a gravidade
-    T = tempo.get_time() / 1000
-    F = G * T
-    aceleracao_y += F
-    personagem.rect.y += aceleracao_y
+
+    # Se o personagem estiver pulando, descolar sua posição no eixo y de acordo
+    if personagem.pular:
+        desolocamento = (-personagem.forca_y)/10 
+        personagem.forca_y -= G
+        personagem.rect.y += desolocamento
 
     # Definindo a colisão com o chão
     chao = 400
     if personagem.rect.y >= chao:
         personagem.rect.y = chao
+        personagem.forca_y = 0
+
+
 
     # Desenhando o personagem e Atualizando a tela
     todas_as_sprites.draw(tela)
