@@ -30,7 +30,6 @@ aceleracao_x = aceleracao_y = 0
 tempo = pygame.time.Clock()
 G = 10
 
-
 # Função que escreve textos na tela
 def draw_text(texto, fonte, cor, tela, x, y):
     text_obj = font.render(texto, 1, cor)
@@ -50,8 +49,12 @@ class Personagem(pygame.sprite.Sprite):
             img = sprite_sheet.subsurface((i * 32, 0), (32, 32))
             self.sprites.append(img)
 
-        self.atual, self.indice = 0, 3
+        self.atual, self.pular_call_se_impar = 0, 3
         self.image = self.sprites[self.atual]
+
+
+        self.sequencia_correr = [4, 5, 4, 6, 7, 8, 7, 6]
+        self.correr_anim_indx = 0
 
         # Definindo a posição inicial do personagem
         self.rect = self.image.get_rect()
@@ -64,9 +67,13 @@ class Personagem(pygame.sprite.Sprite):
 
     def pulo(self): # Função chamada quando apertamos "W" ou "Up"
         self.pular = True
+        self.reset_correr_idx()
 
     def andar(self): # Função chamada quando apertamos "A", "D", "Left" ou "Right"
         self.correr = True
+
+    def reset_correr_idx(self):
+        self.correr_anim_indx= 0
 
     def update(self): 
         # Configurando o pulo:
@@ -86,16 +93,17 @@ class Personagem(pygame.sprite.Sprite):
                 self.atual += 0.3
             if self.atual >= 4: # A posição 4 é quando começa a correr. Então voltamos ao inicio
                 self.atual = 0
+            self.reset_correr_idx()
 
-        elif self.correr and self.indice % 2 == 0:
-            # se o index da animacao for maior ou igual a 8, reverter a animacao
-            # se for menor que 4, ir no fluxo normal,
-            # se nao for nenhum dos dois, nao mudar, continuar sendo True ou False
-            self.reverse = self.atual >= 8 or (False if self.atual <= 4 else self.reverse)
-            self.atual = self.reverse and self.atual - 1 or self.atual + 1
+        elif self.correr and self.pular_call_se_impar % 2 == 0:
+
+            if self.correr_anim_indx >= len(self.sequencia_correr):
+                self.reset_correr_idx()
+            self.atual = self.sequencia_correr[self.correr_anim_indx]
+            self.correr_anim_indx += 1
 
 
-        self.indice += 1
+        self.pular_call_se_impar += 1
 
         self.image = self.sprites[int(self.atual)]
         
