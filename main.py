@@ -21,7 +21,7 @@ click = False
 chao = 400
 
 # Definindo as configurações da janela
-largura, altura = 800, 600
+largura, altura = 1280, 720
 tela = pygame.display.set_mode((largura, altura))
 pygame.display.set_caption("Perazzo Contra as Forças rWins")
 
