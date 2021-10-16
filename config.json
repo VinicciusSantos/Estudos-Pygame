@@ -1,0 +1,7 @@
+{
+    "Tela": [854, 480],
+    "Gravidade": 1,
+    "Forca_pulo": 15,
+    "Vel_x": 20,
+    "Chao": 320
+}
