@@ -12,18 +12,18 @@ diretorio_sons = os.path.join(diretorio_principal, "assets", "sons")
 pygame.init()
 sprite_sheet = pygame.image.load(os.path.join(diretorio_sprites, "Personagem.png"))
 
+# Definindo as configurações da janela
+largura, altura = 854, 480
+tela = pygame.display.set_mode((largura, altura))
+pygame.display.set_caption("Perazzo Contra as Forças rWins")
+
 # Algumas variaveis globais:
 rgb_preto = (0, 0, 0)
 rgb_vermelho = (255, 0, 0)
 rgb_branco = (255, 255, 255)
 font = pygame.font.SysFont(None, 20)
 click = False
-chao = 400
-
-# Definindo as configurações da janela
-largura, altura = 854, 480
-tela = pygame.display.set_mode((largura, altura))
-pygame.display.set_caption("Perazzo Contra as Forças rWins")
+chao = altura * 2 / 3
 
 # Criando a gravidade:
 aceleracao_x = aceleracao_y = 0
@@ -119,13 +119,13 @@ def main_menu():
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
         # Botão de Iniciar
-        button_start = pygame.Rect(largura/3, 300, largura/3, 50)
+        button_start = pygame.Rect(largura/3, altura*3/5, largura/3, altura/9)
         if button_start.collidepoint((mouse_x, mouse_y)):
             if click:
                 game()
 
         # Botão de quitar:
-        button_quit = pygame.Rect(largura/3, 400, largura/3, 50)
+        button_quit = pygame.Rect(largura/3, altura*271/360, largura/3, altura/9)
         if button_quit.collidepoint((mouse_x, mouse_y)):
             if click:
                 pygame.quit()
