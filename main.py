@@ -5,7 +5,8 @@ import json
 from pygame.locals import *
 from sys import exit
 
-from Player import Personagem
+from Player import Personagem, Arma, Mira
+
 
 # Abrir arquivp com as configs
 config_f = open("./config.json")
@@ -41,10 +42,21 @@ def draw_text(texto, fonte, cor, tela, x, y):
     tela.blit(text_obj, text_rect)
 
 
+# Função que pega a coordenada do personagem para desenhar a arma:
+def atualizar_pos(player_x, player_y):
+    posicao_arma = [player_x + 20, player_y + 55]
+    return posicao_arma
+
+
 # Organizando as sprites
 todas_as_sprites = pygame.sprite.Group()
+sprite_arma = pygame.sprite.Group()
 personagem = Personagem()
+arma = Arma()
+mira = Mira()
 todas_as_sprites.add(personagem)
+sprite_arma.add(arma)
+sprite_arma.add(mira)
 
 
 # Menu Principal
@@ -85,14 +97,27 @@ def main_menu():
 def game():
     running = True
     while running:
-        tela.fill(rgb_preto)
+        tela.fill((20, 120, 120))
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 exit()
+
+            # Programando o ataque (Botão direito do mouse mira, esquerda atira, tipo GTA):
+            if event.type == MOUSEBUTTONDOWN:
+                if event.button == 3:
+                    personagem.mirar(True)
+                if event.button == 1:
+                    personagem.atirar()
+            if event.type == MOUSEBUTTONUP and event.button == 3:
+                personagem.mirar(False)
+
+            # Se Apertar ESC:
             if event.type == KEYDOWN and event.key == K_ESCAPE:
                 running = False
-
+        
+        # Se estiver mirando ou atirando, ele fica mais devagar:
+        
         # Pular
         if pygame.key.get_pressed()[K_w] or pygame.key.get_pressed()[K_UP]:
             personagem.pulo()
@@ -101,18 +126,30 @@ def game():
         if pygame.key.get_pressed()[K_a] or pygame.key.get_pressed()[K_LEFT]:
             personagem.andar()
             personagem.rect.x -= config["Vel_x"]
-            personagem.image = pygame.transform.flip(personagem.image, True, False)
+            
+            # Se ele não estiver mirando, a sprite será invertida quando o personagem virar para esquerda
+            # Quando ele está mirando, ele tem uma configuração para seguir o x do mouse para virar
+            if personagem.mira == personagem.tiro == False:
+                personagem.image = pygame.transform.flip(personagem.image, True, False)
 
         # Ir para a Direita
         if pygame.key.get_pressed()[K_d] or pygame.key.get_pressed()[K_RIGHT]:
             personagem.andar()
             personagem.rect.x += config["Vel_x"]
 
-        # Desenhando o personagem e Atualizando a tela
+        # Desenhando o personagem
         todas_as_sprites.draw(tela)
         todas_as_sprites.update()
+
+        # Desenhar arma e a mira:
+        pos_arma = atualizar_pos(personagem.rect.x, personagem.rect.y)
+        if personagem.tiro or personagem.mira:
+            arma.rect = pos_arma
+            sprite_arma.draw(tela)
+            sprite_arma.update()
+
         pygame.display.update()
-        tempo.tick(30)
+        tempo.tick(40)
 
 
 main_menu()
