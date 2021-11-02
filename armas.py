@@ -1,5 +1,7 @@
 import pygame, json
 from pygame.locals import *
+from Player import Personagem
+personagem = Personagem()
 
 # Abrir arquivp com as configs
 config_f = open("./config.json")
@@ -19,7 +21,8 @@ class Bazuca(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
     def update(self):
-        self.atual = 0
-        self.imagem = self.sprites[self.atual]
-
+        if personagem.atual == 17:
+            self.atual=0
+        else:
+            self.image = pygame.transform.flip(self.image, False, True)
 

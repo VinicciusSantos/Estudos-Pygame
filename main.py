@@ -1,4 +1,4 @@
-import pygame, json
+import pygame, json, math
 
 from pygame.locals import *
 from sys import exit
@@ -25,7 +25,6 @@ rgb_preto = (0, 0, 0)
 rgb_vermelho = (255, 0, 0)
 rgb_branco = (255, 255, 255)
 font = pygame.font.SysFont(None, 20)
-click = False
 
 tempo = pygame.time.Clock()
 
@@ -53,6 +52,14 @@ todas_as_sprites.add(personagem)
 # Menu Principal
 def main_menu():
     while True:
+        click = False
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                exit()
+            if event.type == MOUSEBUTTONDOWN and event.button == 1: # Se clicar com o botão direitodo mouse
+                click = True
+
         tela.fill(rgb_preto)
         draw_text("Menu Principal", font, rgb_vermelho, tela, 20, 20)
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -73,13 +80,6 @@ def main_menu():
         pygame.draw.rect(tela, rgb_vermelho, button_start)
         pygame.draw.rect(tela, rgb_vermelho, button_quit)
 
-        click = False
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                exit()
-            if event.type == MOUSEBUTTONDOWN and event.button == 1: # Se clicar com o botão direitodo mouse
-                click = True
         pygame.display.update()
         tempo.tick(30)
 
@@ -94,11 +94,19 @@ def game():
                 pygame.quit()
                 exit()
 
+            if event.type == MOUSEBUTTONDOWN:
+                personagem.mirar(True)
+
+            if event.type == MOUSEBUTTONUP:
+                personagem.mirar(False)
+
             # Se Apertar ESC:
             if event.type == KEYDOWN and event.key == K_ESCAPE:
                 running = False
 
         vel_x = 23
+        if personagem.mira:
+            vel_x = 3
         # Pular
         if pygame.key.get_pressed()[K_w] or pygame.key.get_pressed()[K_UP]:
             personagem.pulo()
@@ -116,6 +124,18 @@ def game():
         # Desenhando o personagem
         todas_as_sprites.draw(tela)
         todas_as_sprites.update()
+
+        if personagem.mira:
+            # Rotação da Arma:
+            gunpos = (personagem.rect.x+90, personagem.rect.y+85)
+            position = pygame.mouse.get_pos()
+            angle = -math.atan2(position[1] - (gunpos[1]-32), position[0] - (gunpos[0]-26))*57.29
+            gunrot = pygame.transform.rotate(bazuca.image, angle)
+            gunpos1 = (gunpos[0]-gunrot.get_rect().width/2, gunpos[1]-gunrot.get_rect().height/2)
+
+            tela.blit(gunrot, gunpos1)
+            print(angle)
+
         pygame.display.update()
         tempo.tick(40)
 

@@ -19,11 +19,14 @@ class Personagem(pygame.sprite.Sprite):
 
         # Identificando as sprites na imagem
         linhas, colunas, cont = 5, 4, 0
-        for c in range(colunas):
-            for i in range(linhas-1):
-                cont += 1
-                img = sprite_sheet.subsurface((i * 32, c * 32), (32, 32))
-                self.sprites.append(img)
+        try:
+            for c in range(colunas+1):
+                for i in range(linhas-1):
+                    cont += 1
+                    img = sprite_sheet.subsurface((i * 32, c * 32), (32, 32))
+                    self.sprites.append(img)
+        except ValueError:
+            print(c, i)
 
         self.atual, self.pular_call_se_impar = 0, 0
         self.sequencia_correr_d = [6, 4, 5, 5, 4, 6, 7, 8, 8, 7, 6]
@@ -42,8 +45,8 @@ class Personagem(pygame.sprite.Sprite):
         self.correr_d = self.correr_e = self.pular = self.reverse = self.descer = self.mira = self.tiro = False
         self.forca_y = 0
 
-    def pos(self):
-        return self.image.get_rect()
+    def mirar(self, trueorfalse=False):
+        self.mira = trueorfalse
 
     def pulo(self): # Função chamada quando apertamos "W" ou "Up"
         self.pular = True
@@ -98,8 +101,16 @@ class Personagem(pygame.sprite.Sprite):
             self.pular = self.descer = False
         self.correr_d = self.correr_e = False
 
-         # Definindo a colisão com o chão
-        if self.rect.y >= config["Chao"]:
+        # Configurando a mira
+        if self.mira:
+            mouse_x = pygame.mouse.get_pos()[0]
+            if mouse_x > self.rect.centerx:
+                self.atual = 16
+            else:
+                self.atual = 17
+
+        # Definindo a colisão com o chão
+        elif self.rect.y >= config["Chao"]:
             self.rect.y = config["Chao"]
             self.forca_y = 0
         elif self.descer:    
@@ -107,16 +118,7 @@ class Personagem(pygame.sprite.Sprite):
         else:
             self.atual = 14
 
-        # Configurando a mira
-        if self.mira:
-            mouse_x, mouse_y = pygame.mouse.get_pos()
-            if mouse_x < self.rect.centerx:
-                self.atual = 12
-            else:
-                self.atual = 11
 
         self.image = self.sprites[int(self.atual)]
         self.image = pygame.transform.scale(self.image, (32 * 5, 32 * 5))
         self.tiro = False 
-
-personagem = Personagem()
