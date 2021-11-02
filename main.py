@@ -1,19 +1,15 @@
-import pygame
-import os
-import json
+import pygame, json
 
 from pygame.locals import *
 from sys import exit
 
 from Player import Personagem
+from armas import Bazuca
+
 
 # Abrir arquivp com as configs
 config_f = open("./config.json")
 config = json.load(config_f)
-
-# Definindo diretórios com a biblioteca OS
-diretorio_principal = os.path.dirname(__file__)
-diretorio_sons = os.path.join(diretorio_principal, "assets", "sons")
 
 # Iniciando o pygame e importando a folha de sprites do personagem principal
 pygame.init()
@@ -41,9 +37,16 @@ def draw_text(texto, fonte, cor, tela, x, y):
     tela.blit(text_obj, text_rect)
 
 
+# Função que pega a coordenada do personagem para desenhar a arma:
+def atualizar_pos(player_x, player_y):
+    posicao_arma = [player_x + 20, player_y + 55]
+    return posicao_arma
+
+
 # Organizando as sprites
 todas_as_sprites = pygame.sprite.Group()
 personagem = Personagem()
+bazuca = Bazuca()
 todas_as_sprites.add(personagem)
 
 
@@ -85,34 +88,36 @@ def main_menu():
 def game():
     running = True
     while running:
-        tela.fill(rgb_preto)
+        tela.fill((20, 120, 120))
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 exit()
+
+            # Se Apertar ESC:
             if event.type == KEYDOWN and event.key == K_ESCAPE:
                 running = False
 
+        vel_x = 23
         # Pular
         if pygame.key.get_pressed()[K_w] or pygame.key.get_pressed()[K_UP]:
             personagem.pulo()
 
         # Ir para a esquerda:
         if pygame.key.get_pressed()[K_a] or pygame.key.get_pressed()[K_LEFT]:
-            personagem.andar()
-            personagem.rect.x -= config["Vel_x"]
-            personagem.image = pygame.transform.flip(personagem.image, True, False)
+            personagem.andar_e()
+            personagem.rect.x -= vel_x
 
         # Ir para a Direita
         if pygame.key.get_pressed()[K_d] or pygame.key.get_pressed()[K_RIGHT]:
-            personagem.andar()
-            personagem.rect.x += config["Vel_x"]
-
-        # Desenhando o personagem e Atualizando a tela
+            personagem.andar_d()
+            personagem.rect.x += vel_x
+            
+        # Desenhando o personagem
         todas_as_sprites.draw(tela)
         todas_as_sprites.update()
         pygame.display.update()
-        tempo.tick(30)
+        tempo.tick(40)
 
 
 main_menu()
