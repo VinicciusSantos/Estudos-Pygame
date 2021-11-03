@@ -124,17 +124,20 @@ def game():
         # Desenhando o personagem
         todas_as_sprites.draw(tela)
         todas_as_sprites.update()
-        
-        # Personagem atirando
+
         if personagem.mira:
             # Rotação da Arma:
             gunpos = (personagem.rect.x+90, personagem.rect.y+85)
             position = pygame.mouse.get_pos()
             angle = -math.atan2(position[1] - (gunpos[1]-32), position[0] - (gunpos[0]-26))*57.29
             gunrot = pygame.transform.rotate(bazuca.image, angle)
+            if personagem.atual == 17:
+                gunrot = pygame.transform.rotate(bazuca.image, -angle)
             gunpos1 = (gunpos[0]-gunrot.get_rect().width/2, gunpos[1]-gunrot.get_rect().height/2)
-            # Desenhando a arma
+            if personagem.atual == 17:
+                gunrot = pygame.transform.flip(gunrot, False, True)
             tela.blit(gunrot, gunpos1)
+
 
         pygame.display.update()
         tempo.tick(40)
