@@ -127,9 +127,9 @@ def game():
 
         if personagem.mira:
             # Rotação da Arma:
-            gunpos = (personagem.rect.x+90, personagem.rect.y+85)
+            gunpos = (personagem.rect.x+85, personagem.rect.y+85)
             position = pygame.mouse.get_pos()
-            angle = -math.atan2(position[1] - (gunpos[1]-32), position[0] - (gunpos[0]-26))*57.29
+            angle = -math.atan2(position[1] - (gunpos[1]), position[0] - (gunpos[0]))*57.29
             gunrot = pygame.transform.rotate(bazuca.image, angle)
             if personagem.atual == 17:
                 gunrot = pygame.transform.rotate(bazuca.image, -angle)
