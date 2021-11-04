@@ -4,7 +4,7 @@ from pygame.locals import *
 from sys import exit
 
 from Player import Personagem
-from armas import Bazuca
+from armas import Bazuca, Bullet
 
 
 # Abrir arquivp com as configs
@@ -35,15 +35,9 @@ def draw_text(texto, fonte, cor, tela, x, y):
     text_rect.topleft = (x, y)
     tela.blit(text_obj, text_rect)
 
-
-# Função que pega a coordenada do personagem para desenhar a arma:
-def atualizar_pos(player_x, player_y):
-    posicao_arma = [player_x + 20, player_y + 55]
-    return posicao_arma
-
-
 # Organizando as sprites
 todas_as_sprites = pygame.sprite.Group()
+bullet_group = pygame.sprite.Group()
 personagem = Personagem()
 bazuca = Bazuca()
 todas_as_sprites.add(personagem)
@@ -95,10 +89,13 @@ def game():
                 exit()
 
             if event.type == MOUSEBUTTONDOWN:
-                personagem.mirar(True)
-
+                if event.button == 3:
+                    personagem.mirar(True)
+                if event.button == 1:
+                    bullet_group.add(create_bullet())
             if event.type == MOUSEBUTTONUP:
-                personagem.mirar(False)
+                if event.button == 3:
+                    personagem.mirar(False)
 
             # Se Apertar ESC:
             if event.type == KEYDOWN and event.key == K_ESCAPE:
@@ -127,7 +124,7 @@ def game():
 
         if personagem.mira:
             # Rotação da Arma:
-            gunpos = (personagem.rect.x+85, personagem.rect.y+85)
+            gunpos = (personagem.rect.x+60, personagem.rect.y+68)
             position = pygame.mouse.get_pos()
             angle = -math.atan2(position[1] - (gunpos[1]), position[0] - (gunpos[0]))*57.29
             gunrot = pygame.transform.rotate(bazuca.image, angle)
@@ -136,9 +133,15 @@ def game():
             gunpos1 = (gunpos[0]-gunrot.get_rect().width/2, gunpos[1]-gunrot.get_rect().height/2)
             if personagem.atual == 17:
                 gunrot = pygame.transform.flip(gunrot, False, True)
+
+            # Criando a bala:
+            def create_bullet():
+                return Bullet(gunpos1[0], gunpos1[1], angle)
+
             tela.blit(gunrot, gunpos1)
 
-
+        bullet_group.draw(tela)
+        bullet_group.update()
         pygame.display.update()
         tempo.tick(40)
 

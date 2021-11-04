@@ -7,20 +7,46 @@ personagem = Personagem()
 config_f = open("./config.json")
 config = json.load(config_f)
 
+sprite_sheet = pygame.image.load("assets/sprites/pixel_art_arma.png")
+
 pygame.init()
 
 # Configurações para a bazuca de tux
 class Bazuca(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        bazuca_direita = pygame.image.load("assets/sprites/pixel_art_arma.png")
+        self.sprites = list()
+        linhas, colunas = 2, 1
+        try:
+            for c in range(colunas+1):
+                for i in range(linhas-1):
+                    img = sprite_sheet.subsurface((i * 128, c * 40), (128, 40))
+                    self.sprites.append(img)
+        except ValueError:
+            print(c, i)
+
         self.atual = 0
-        self.image = bazuca_direita
+        self.image = self.sprites[self.atual]
         self.rect = self.image.get_rect()
 
     def update(self):
         if personagem.atual == 17:
-            self.atual=0
+            self.atual= 0
         else:
             self.image = pygame.transform.flip(self.image, False, True)
+
+
+bazuca = Bazuca()
+
+
+# Criando as munições (TUX):
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, pos_x, pos_y, angle):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("assets/sprites/tux_bullet.png")
+        self.rect = self.image.get_rect(center = (pos_x, pos_y))
+        self.image = pygame.transform.rotate(self.image, angle)
+
+    def update(self):
+        self.rect.x += 20
 

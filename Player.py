@@ -18,12 +18,11 @@ class Personagem(pygame.sprite.Sprite):
         self.sprites = []
 
         # Identificando as sprites na imagem
-        linhas, colunas, cont = 5, 4, 0
+        linhas, colunas = 5, 4
         try:
             for c in range(colunas+1):
                 for i in range(linhas-1):
-                    cont += 1
-                    img = sprite_sheet.subsurface((i * 32, c * 32), (32, 32))
+                    img = sprite_sheet.subsurface((i * 42, c * 42), (42, 42))
                     self.sprites.append(img)
         except ValueError:
             print(c, i)
@@ -33,9 +32,7 @@ class Personagem(pygame.sprite.Sprite):
         self.sequencia_correr_e = [11, 9, 10, 10, 9, 11, 12, 13, 13, 12, 11]
         self.sequencia_respirar = [0, 0, 0, 0, 0, 0, 1, 2, 3]
         self.correr_anim_indx = self.resp_indx = 0
-
         self.image = self.sprites[self.atual]
-        self.image = pygame.transform.scale(self.image, (32 * 5, 32 * 5))
 
         # Definindo a posição inicial do personagem
         self.rect = self.image.get_rect()
@@ -104,7 +101,7 @@ class Personagem(pygame.sprite.Sprite):
         # Configurando a mira
         if self.mira:
             mouse_x = pygame.mouse.get_pos()[0]
-            if mouse_x > self.rect.centerx:
+            if mouse_x > self.rect.center[0]+40:
                 self.atual = 16
             else:
                 self.atual = 17
@@ -120,5 +117,4 @@ class Personagem(pygame.sprite.Sprite):
 
 
         self.image = self.sprites[int(self.atual)]
-        self.image = pygame.transform.scale(self.image, (32 * 5, 32 * 5))
-        self.tiro = False 
+        self.image = pygame.transform.scale(self.image, (42 * 2.8, 42 * 2.8))
