@@ -1,3 +1,4 @@
+import math
 import pygame, json
 from pygame.locals import *
 from Player import Personagem
@@ -46,7 +47,8 @@ class Bullet(pygame.sprite.Sprite):
         self.image = pygame.image.load("assets/sprites/tux_bullet.png")
         self.rect = self.image.get_rect(center = (pos_x, pos_y))
         self.image = pygame.transform.rotate(self.image, angle)
+        self.angle = math.radians(angle)
 
     def update(self):
-        self.rect.x += 20
-
+        self.rect.x += 20 * math.cos(self.angle)
+        self.rect.y += 20 * math.sin(self.angle) * -1

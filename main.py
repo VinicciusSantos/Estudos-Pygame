@@ -127,6 +127,11 @@ def game():
             gunpos = (personagem.rect.x+60, personagem.rect.y+68)
             position = pygame.mouse.get_pos()
             angle = -math.atan2(position[1] - (gunpos[1]), position[0] - (gunpos[0]))*57.29
+
+            radius = math.sqrt(60**2 + 68**2)
+            bala_pos = (gunpos[0] + radius*(math.cos(math.radians(angle*-1))), 
+            gunpos[1] + radius*math.sin(math.radians(angle*-1)))
+
             gunrot = pygame.transform.rotate(bazuca.image, angle)
             if personagem.atual == 17:
                 gunrot = pygame.transform.rotate(bazuca.image, -angle)
@@ -136,7 +141,7 @@ def game():
 
             # Criando a bala:
             def create_bullet():
-                return Bullet(gunpos1[0], gunpos1[1], angle)
+                return Bullet(bala_pos[0], bala_pos[1], angle)
 
             tela.blit(gunrot, gunpos1)
 
