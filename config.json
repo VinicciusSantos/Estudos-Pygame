@@ -1,6 +1,8 @@
 {
-    "Tela": [854, 480],
-    "Gravidade": 1,
-    "Forca_pulo": 15,
-    "Chao": 320
+  "Tela": [854, 480],
+  "Gravidade": 1,
+  "Forca_pulo": 15,
+  "Chao": 320,
+  "Forca_recoil": 15,
+  "Atrito": 1
 }

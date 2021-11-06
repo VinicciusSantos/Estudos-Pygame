@@ -1,3 +1,4 @@
+import math
 import pygame, os, json
 
 # Abrir arquivp com as configs
@@ -41,6 +42,7 @@ class Personagem(pygame.sprite.Sprite):
 
         self.correr_d = self.correr_e = self.pular = self.reverse = self.descer = self.mira = self.tiro = False
         self.forca_y = 0
+        self.forca_x = 0
 
     def mirar(self, trueorfalse=False):
         self.mira = trueorfalse
@@ -59,9 +61,21 @@ class Personagem(pygame.sprite.Sprite):
 
     def reset_idx(self):
         self.correr_anim_indx = self.resp_indx = 0
+    
+    def recoil(self, angle):
+        cosseno = math.cos(math.radians(angle))
+        sinal_invertido_coss = (-cosseno)/abs(cosseno)
+        self.forca_x = config["Forca_recoil"] * sinal_invertido_coss
 
     def update(self): 
         # Configurando o pulo:
+        if self.forca_x != 0:
+            self.rect.x += self.forca_x
+            if self.forca_x > 0:
+                self.forca_x -= config["Atrito"]
+            else:
+                self.forca_x += config["Atrito"]
+
         if self.pular:
             if self.forca_y < 0: 
                 self.descer = True

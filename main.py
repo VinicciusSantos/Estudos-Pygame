@@ -44,6 +44,7 @@ personagem = Personagem()
 bazuca = Bazuca()
 todas_as_sprites.add(personagem)
 
+angle = 0
 
 # Menu Principal
 def main_menu():
@@ -108,7 +109,8 @@ def game():
                     personagem.mirar(True)
                 if event.button == 1:
                     if personagem.mira:
-                      bullet_group.add(create_bullet())
+                        bullet_group.add(create_bullet())
+                        personagem.recoil(angle)
             if event.type == MOUSEBUTTONUP:
                 if event.button == 3:
                     personagem.mirar(False)
