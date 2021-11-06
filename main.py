@@ -1,5 +1,6 @@
 import pygame, json, math
 
+from random import randint
 from pygame.locals import *
 from sys import exit
 
@@ -27,6 +28,7 @@ rgb_branco = (255, 255, 255)
 font = pygame.font.SysFont(None, 20)
 
 tempo = pygame.time.Clock()
+particles = []
 
 # Função que escreve textos na tela
 def draw_text(texto, fonte, cor, tela, x, y):
@@ -83,6 +85,19 @@ def game():
     running = True
     while running:
         tela.fill((20, 120, 120))
+
+        # Nas particulas temos: [[posição_x, posição_y], [velocidade], [tempo]]
+        # A velocidade e o tempo são dados pelo randint, que faz as partículas ficarem mais animadas e variadas.
+        particles.append([[250,250], [randint(0,20) / 10 - 1, -2], randint(4, 6)])
+        for particle in particles:
+            particle[0][0] += particle[1][0]
+            particle[0][1] += particle[1][1]
+            particle[2] -= 0.1
+            particle[1][1] += 0.01
+            pygame.draw.circle(tela, (rgb_branco), particle[0], int(particle[2]))
+            if particle[2] <=0:
+                particles.remove(particle)
+                
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -92,7 +107,8 @@ def game():
                 if event.button == 3:
                     personagem.mirar(True)
                 if event.button == 1:
-                    bullet_group.add(create_bullet())
+                    if personagem.mira:
+                      bullet_group.add(create_bullet())
             if event.type == MOUSEBUTTONUP:
                 if event.button == 3:
                     personagem.mirar(False)
@@ -124,7 +140,7 @@ def game():
 
         if personagem.mira:
             # Rotação da Arma:
-            gunpos = (personagem.rect.x+60, personagem.rect.y+68)
+            gunpos = (personagem.rect.x+57, personagem.rect.y+68)
             position = pygame.mouse.get_pos()
             angle = -math.atan2(position[1] - (gunpos[1]), position[0] - (gunpos[0]))*57.29
 
@@ -144,7 +160,7 @@ def game():
                 return Bullet(bala_pos[0], bala_pos[1], angle)
 
             tela.blit(gunrot, gunpos1)
-
+        
         bullet_group.draw(tela)
         bullet_group.update()
         pygame.display.update()
