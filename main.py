@@ -89,7 +89,9 @@ def game():
 
         # Nas particulas temos: [[posição_x, posição_y], [velocidade], [tempo]]
         # A velocidade e o tempo são dados pelo randint, que faz as partículas ficarem mais animadas e variadas.
-        particles.append([[250,250], [randint(0,20) / 10 - 1, -2], randint(4, 6)])
+        
+        def particulas(pos_x, pos_y):
+            particles.append([[pos_x, pos_y], [randint(0,20) / 10 - 1, -2], randint(4, 6)])
         for particle in particles:
             particle[0][0] += particle[1][0]
             particle[0][1] += particle[1][1]
@@ -159,8 +161,9 @@ def game():
 
             # Criando a bala:
             def create_bullet():
-                return Bullet(bala_pos[0], bala_pos[1], angle)
-
+                particulas(bala_pos[0], bala_pos[1])
+                return Bullet(bala_pos[0], bala_pos[1], angle)     
+                
             tela.blit(gunrot, gunpos1)
         
         bullet_group.draw(tela)
