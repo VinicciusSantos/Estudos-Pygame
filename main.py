@@ -5,7 +5,7 @@ from pygame.locals import *
 from sys import exit
 
 from Player import Personagem
-from armas import Bazuca, Bullet
+from armas import *
 
 
 # Abrir arquivp com as configs
@@ -95,8 +95,8 @@ def game():
         for particle in particles:
             particle[0][0] += particle[1][0]
             particle[0][1] += particle[1][1]
-            particle[2] -= 0.1
-            particle[1][1] += 0.01
+            particle[2] -= 0.5
+            particle[1][1] += 0.01 # Gravidade
             pygame.draw.circle(tela, (rgb_branco), particle[0], int(particle[2]))
             if particle[2] <=0:
                 particles.remove(particle)
@@ -131,11 +131,15 @@ def game():
         # Ir para a esquerda:
         if pygame.key.get_pressed()[K_a] or pygame.key.get_pressed()[K_LEFT]:
             personagem.andar_e()
+            if personagem.nochao:
+                particulas(personagem.rect.bottomright[0], personagem.rect.bottomright[1] + 64)
             personagem.rect.x -= vel_x
 
         # Ir para a Direita
         if pygame.key.get_pressed()[K_d] or pygame.key.get_pressed()[K_RIGHT]:
             personagem.andar_d()
+            if personagem.nochao:
+                particulas(personagem.rect.bottomleft[0]+60, personagem.rect.bottomleft[1] + 64)
             personagem.rect.x += vel_x
             
         # Desenhando o personagem
@@ -165,7 +169,7 @@ def game():
                 return Bullet(bala_pos[0], bala_pos[1], angle)     
                 
             tela.blit(gunrot, gunpos1)
-        
+
         bullet_group.draw(tela)
         bullet_group.update()
         pygame.display.update()

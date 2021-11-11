@@ -49,6 +49,17 @@ class Bullet(pygame.sprite.Sprite):
         self.image = pygame.transform.rotate(self.image, angle)
         self.angle = math.radians(angle)
 
+
     def update(self):
-        self.rect.x += 20 * math.cos(self.angle)
-        self.rect.y += 20 * math.sin(self.angle) * -1
+        self.rect.x += 30 * math.cos(self.angle)
+        self.rect.y += 30 * math.sin(self.angle) * -1
+
+        if self.rect.x <=0 or self.rect.x >= config["Tela"][0] or self.rect.y <= 0 or self.rect.y  >= config["Tela"][1]:
+            print("morreu")
+            self.kill()
+
+
+def pos():
+    return (Bullet.update())
+        
+        

@@ -40,9 +40,8 @@ class Personagem(pygame.sprite.Sprite):
         self.rect.bottomleft = [200, 500]
 
 
-        self.correr_d = self.correr_e = self.pular = self.reverse = self.descer = self.mira = self.tiro = False
-        self.forca_y = 0
-        self.forca_x = 0
+        self.correr_d = self.correr_e = self.pular = self.reverse = self.descer = self.mira = self.tiro = self.nochao = False
+        self.forca_y = self.forca_x = 0
 
     def mirar(self, trueorfalse=False):
         self.mira = trueorfalse
@@ -69,6 +68,7 @@ class Personagem(pygame.sprite.Sprite):
 
     def update(self): 
         # Configurando o pulo:
+        self.nochao = False
         if self.forca_x != 0:
             self.rect.x += self.forca_x
             if self.forca_x > 0:
@@ -122,6 +122,7 @@ class Personagem(pygame.sprite.Sprite):
 
         # Definindo a colisão com o chão
         elif self.rect.y >= config["Chao"]:
+            self.nochao = True
             self.rect.y = config["Chao"]
             self.forca_y = 0
         elif self.descer:    
