@@ -1,3 +1,4 @@
+from typing import Tuple
 import pygame, json, math
 
 from random import randint
@@ -83,10 +84,11 @@ def main_menu():
 
 # Iniciando o Jogo, a função é chamada dentro da função main_menu() 
 def game():
+    cool_down = 0
     running = True
+    atirar = False
     while running:
         tela.fill((20, 120, 120))
-
         # Nas particulas temos: [[posição_x, posição_y], [velocidade], [tempo]]
         # A velocidade e o tempo são dados pelo randint, que faz as partículas ficarem mais animadas e variadas.
         
@@ -107,19 +109,27 @@ def game():
                 exit()
 
             if event.type == MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    atirar = True
                 if event.button == 3:
                     personagem.mirar(True)
+            elif event.type == MOUSEBUTTONUP:
                 if event.button == 1:
-                    if personagem.mira:
-                        bullet_group.add(create_bullet())
-                        personagem.recoil(angle)
-            if event.type == MOUSEBUTTONUP:
+                    atirar = False
                 if event.button == 3:
                     personagem.mirar(False)
 
             # Se Apertar ESC:
             if event.type == KEYDOWN and event.key == K_ESCAPE:
                 running = False
+        
+
+        # Configurando o cooldown, criando a arma e o recoil
+        if atirar == True and personagem.mira and cool_down <= 0:
+            cool_down = 15
+            bullet_group.add(create_bullet())
+            personagem.recoil(angle)   
+
 
         vel_x = 23
         if personagem.mira:
@@ -156,6 +166,7 @@ def game():
             bala_pos = (gunpos[0] + radius*(math.cos(math.radians(angle*-1))), 
             gunpos[1] + radius*math.sin(math.radians(angle*-1)))
 
+            # Rotação da Arma conforme o personagem
             gunrot = pygame.transform.rotate(bazuca.image, angle)
             if personagem.atual == 17:
                 gunrot = pygame.transform.rotate(bazuca.image, -angle)
@@ -164,9 +175,10 @@ def game():
                 gunrot = pygame.transform.flip(gunrot, False, True)
 
             # Criando a bala:
+            cool_down -= 1
             def create_bullet():
                 particulas(bala_pos[0], bala_pos[1])
-                return Bullet(bala_pos[0], bala_pos[1], angle)     
+                return Bullet(bala_pos[0], bala_pos[1], angle)  
                 
             tela.blit(gunrot, gunpos1)
 
