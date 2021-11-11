@@ -39,7 +39,6 @@ class Personagem(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.bottomleft = [200, 500]
 
-
         self.correr_d = self.correr_e = self.pular = self.reverse = self.descer = self.mira = self.tiro = self.nochao = False
         self.forca_y = self.forca_x = 0
 
@@ -129,7 +128,6 @@ class Personagem(pygame.sprite.Sprite):
             self.atual = 15
         else:
             self.atual = 14
-
 
         self.image = self.sprites[int(self.atual)]
         self.image = pygame.transform.scale(self.image, (42 * 2.8, 42 * 2.8))

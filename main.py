@@ -1,4 +1,3 @@
-from typing import Tuple
 import pygame, json, math
 
 from random import randint
@@ -43,6 +42,7 @@ todas_as_sprites = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 personagem = Personagem()
 bazuca = Bazuca()
+mira = Mira()
 todas_as_sprites.add(personagem)
 
 angle = 0
@@ -89,9 +89,9 @@ def game():
     atirar = False
     while running:
         tela.fill((20, 120, 120))
+
         # Nas particulas temos: [[posição_x, posição_y], [velocidade], [tempo]]
         # A velocidade e o tempo são dados pelo randint, que faz as partículas ficarem mais animadas e variadas.
-        
         def particulas(pos_x, pos_y):
             particles.append([[pos_x, pos_y], [randint(0,20) / 10 - 1, -2], randint(4, 6)])
         for particle in particles:
@@ -107,7 +107,6 @@ def game():
             if event.type == QUIT:
                 pygame.quit()
                 exit()
-
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
                     atirar = True
@@ -118,7 +117,6 @@ def game():
                     atirar = False
                 if event.button == 3:
                     personagem.mirar(False)
-
             # Se Apertar ESC:
             if event.type == KEYDOWN and event.key == K_ESCAPE:
                 running = False
@@ -130,10 +128,10 @@ def game():
             bullet_group.add(create_bullet())
             personagem.recoil(angle)   
 
-
         vel_x = 23
         if personagem.mira:
             vel_x = 3
+        
         # Pular
         if pygame.key.get_pressed()[K_w] or pygame.key.get_pressed()[K_UP]:
             personagem.pulo()
@@ -156,17 +154,23 @@ def game():
         todas_as_sprites.draw(tela)
         todas_as_sprites.update()
 
+        # Configurando as coisas que acontecem quando o personagem está mirando ou atirando
         if personagem.mira:
-            # Rotação da Arma:
+            # Se a arma estiver com cooldown, aparecerá a sprite sem a munição na ponta
+            if cool_down > 4:
+                bazuca.image = bazuca.sprites[1]
+            else:
+                bazuca.image = bazuca.sprites[0]
+
+            # Calculando o ângulo de Rotação da Arma:
             gunpos = (personagem.rect.x+57, personagem.rect.y+68)
             position = pygame.mouse.get_pos()
             angle = -math.atan2(position[1] - (gunpos[1]), position[0] - (gunpos[0]))*57.29
-
             radius = math.sqrt(60**2 + 68**2)
             bala_pos = (gunpos[0] + radius*(math.cos(math.radians(angle*-1))), 
             gunpos[1] + radius*math.sin(math.radians(angle*-1)))
 
-            # Rotação da Arma conforme o personagem
+            # Rotação da Arma conforme a direção que o personagem está indo
             gunrot = pygame.transform.rotate(bazuca.image, angle)
             if personagem.atual == 17:
                 gunrot = pygame.transform.rotate(bazuca.image, -angle)
@@ -180,7 +184,9 @@ def game():
                 particulas(bala_pos[0], bala_pos[1])
                 return Bullet(bala_pos[0], bala_pos[1], angle)  
                 
+            # desenhando a arma e a mira
             tela.blit(gunrot, gunpos1)
+            tela.blit(mira.image, (position[0]-20, position[1]-20))
 
         bullet_group.draw(tela)
         bullet_group.update()

@@ -58,7 +58,10 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
 
 
-def pos():
-    return (Bullet.update())
-        
+class Mira(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("assets/sprites/mira.png")
+        self.rect = self.image.get_rect().center
+        self.image = pygame.transform.scale(self.image, (40, 40))
         
